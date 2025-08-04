@@ -1,0 +1,7 @@
+[requires]
+stb/cci.20240531
+spdlog/1.14.1
+gtest/1.15.0
+
+[generators]
+CMakeDeps
