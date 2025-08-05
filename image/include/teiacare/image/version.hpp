@@ -1,4 +1,4 @@
-// Copyright 2024 TeiaCare
+// Copyright 2025 TeiaCare
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,6 +14,10 @@
 
 #pragma once
 
+/*!
+ * \namespace tc::img::info
+ * \brief Contains version and build information for the TeiaCare Image library.
+ */
 namespace tc::img::info
 {
 extern const char* const name;

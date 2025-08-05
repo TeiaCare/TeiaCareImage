@@ -10,12 +10,19 @@ configure_file(
 )
 
 set(TARGET_HEADERS
-    include/teiacare/image/img.hpp
+    include/teiacare/image/image_color.hpp
+    include/teiacare/image/image_draw.hpp
+    include/teiacare/image/image_io.hpp
+    include/teiacare/image/image_processing.hpp
+    include/teiacare/image/image_resize.hpp
     include/teiacare/image/version.hpp
 )
 
 set(TARGET_SOURCES
-    src/img.cpp
+    src/image_color.cpp
+    src/image_io.cpp
+    src/image_draw.cpp
+    src/image_resize.cpp
     src/version.cpp
 )
 
@@ -61,16 +68,19 @@ if(TC_ENABLE_UNIT_TESTS)
 
     set(UNIT_TESTS_SRC
         tests/main.cpp
+        tests/test_image_color.cpp
+        tests/test_image_draw.cpp
+        tests/test_image_io.cpp
+        tests/test_image_processing.cpp
+        tests/test_image_resize.cpp
     )
 
     add_executable(${TEST_TARGET_NAME})
     target_sources(${TEST_TARGET_NAME} PRIVATE ${UNIT_TESTS_SRC})
-    target_include_directories(${TEST_TARGET_NAME} PRIVATE  ${CMAKE_CURRENT_BINARY_DIR}/proto)
     target_compile_features(${TEST_TARGET_NAME} PUBLIC cxx_std_20)
     target_link_libraries(${TEST_TARGET_NAME}
         PRIVATE
             GTest::gtest
-            GTest::gmock
             teiacare::image
     )
 
@@ -91,8 +101,9 @@ endif()
 #################################################################
 # Examples
 if(TC_ENABLE_EXAMPLES)
-    add_executable(example_image examples/example.cpp)
-    target_compile_features(example_image PUBLIC cxx_std_20)
-    target_link_libraries(example_image PRIVATE teiacare::image)
-    install(TARGETS example_image DESTINATION examples)
+    include(examples)
+    add_example(example_image_io)
+    add_example(example_image_draw)
+    add_example(example_image_resize)
+    add_example(example_image_preprocessing)
 endif()

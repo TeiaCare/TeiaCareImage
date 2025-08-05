@@ -1,18 +1,35 @@
-#include <teiacare/image/img.hpp>
+// Copyright 2025 TeiaCare
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 
+#include <teiacare/image/image_io.hpp>
+
+//clang-format off
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
 
 #define STB_IMAGE_WRITE_IMPLEMENTATION
+#include <stb_image_write.h>
+//clang-format on
+
 #include <filesystem>
 #include <fstream>
-#include <stb_image_write.h>
 #include <stdexcept>
 #include <vector>
 
 namespace tc::img
 {
-std::vector<uint8_t> load_image_as_binary(const std::filesystem::path& filename)
+std::vector<uint8_t> image_load_as_binary(const std::filesystem::path& filename)
 {
     std::ifstream file(filename, std::ios::binary);
     if (!file)
@@ -44,7 +61,7 @@ auto create_image_data(uint8_t* image_data, int width, int height, int channels)
     return std::make_tuple(image_buffer, width, height, channels);
 }
 
-auto load_image(const std::filesystem::path& image_path) -> std::tuple<std::vector<uint8_t>, int, int, int>
+auto image_load(const std::filesystem::path& image_path) -> std::tuple<std::vector<uint8_t>, int, int, int>
 {
     int width, height, channels;
     constexpr const int channels_count = 3;
@@ -52,7 +69,7 @@ auto load_image(const std::filesystem::path& image_path) -> std::tuple<std::vect
     return create_image_data(image_data, width, height, channels);
 }
 
-auto load_image_from_memory(uint8_t* memory_data, std::size_t memory_data_size) -> std::tuple<std::vector<uint8_t>, int, int, int>
+auto image_load_from_memory(uint8_t* memory_data, std::size_t memory_data_size) -> std::tuple<std::vector<uint8_t>, int, int, int>
 {
     int width, height, channels;
     constexpr int channels_count = 3;
@@ -60,7 +77,7 @@ auto load_image_from_memory(uint8_t* memory_data, std::size_t memory_data_size) 
     return create_image_data(image_data, width, height, channels);
 }
 
-void save_image(const std::filesystem::path& image_path, const std::vector<uint8_t>& image_data, int width, int height, int channels)
+void image_save(const std::filesystem::path& image_path, const std::vector<uint8_t>& image_data, int width, int height, int channels)
 {
     bool ok = false;
     const std::string image_ext = (image_path.has_extension() ? image_path.extension().string() : "png");
