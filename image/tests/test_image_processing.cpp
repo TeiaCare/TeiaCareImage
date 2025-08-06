@@ -51,19 +51,19 @@ protected:
     }
 
     // Helper function to create uniform test image
-    std::vector<std::uint8_t> createUniformImage(int width, int height, int channels, std::uint8_t value)
+    std::vector<std::uint8_t> create_uniform_image(int width, int height, int channels, std::uint8_t value)
     {
         return std::vector<std::uint8_t>(width * height * channels, value);
     }
 };
 
-// Test create_blob void version with default parameters
+// Test tc::img::create_blob void version with default parameters
 TEST_F(image_processing_test, create_blob_void_version_defaults)
 {
-    auto image = createUniformImage(2, 2, 3, 128); // 2x2 RGB image with value 128
+    auto image = create_uniform_image(2, 2, 3, 128); // 2x2 RGB image with value 128
     std::vector<float> blob(2 * 2 * 3);
 
-    create_blob(image, 2, 2, 3, blob);
+    tc::img::create_blob(image, 2, 2, 3, blob);
 
     // With default scale factor (1.0/255.0) and mean (0,0,0),
     // each pixel value should be 128/255.0 ≈ 0.502
@@ -75,14 +75,14 @@ TEST_F(image_processing_test, create_blob_void_version_defaults)
     }
 }
 
-// Test create_blob void version with custom scale factor
+// Test tc::img::create_blob void version with custom scale factor
 TEST_F(image_processing_test, create_blob_void_version_custom_scale)
 {
-    auto image = createUniformImage(2, 2, 3, 100);
+    auto image = create_uniform_image(2, 2, 3, 100);
     std::vector<float> blob(2 * 2 * 3);
     float scale_factor = 0.01f;
 
-    create_blob(image, 2, 2, 3, blob, scale_factor);
+    tc::img::create_blob(image, 2, 2, 3, blob, scale_factor);
 
     // With scale factor 0.01, each pixel value should be 100 * 0.01 = 1.0
     for (auto value : blob)
@@ -91,14 +91,14 @@ TEST_F(image_processing_test, create_blob_void_version_custom_scale)
     }
 }
 
-// Test create_blob void version with mean subtraction
+// Test tc::img::create_blob void version with mean subtraction
 TEST_F(image_processing_test, create_blob_void_version_with_mean)
 {
-    auto image = createUniformImage(2, 2, 3, 128);
+    auto image = create_uniform_image(2, 2, 3, 128);
     std::vector<float> blob(2 * 2 * 3);
     std::vector<float> mean = {0.1f, 0.2f, 0.3f};
 
-    create_blob(image, 2, 2, 3, blob, 1.0f / 255.0f, mean);
+    tc::img::create_blob(image, 2, 2, 3, blob, 1.0f / 255.0f, mean);
 
     float base_value = 128.0f / 255.0f;
 
@@ -115,7 +115,7 @@ TEST_F(image_processing_test, create_blob_void_version_with_mean)
     }
 }
 
-// Test create_blob void version with RB channel swapping
+// Test tc::img::create_blob void version with RB channel swapping
 TEST_F(image_processing_test, create_blob_void_version_swap_rb)
 {
     // Create image with different values per channel
@@ -128,7 +128,7 @@ TEST_F(image_processing_test, create_blob_void_version_swap_rb)
     }
 
     std::vector<float> blob(2 * 2 * 3);
-    create_blob(image, 2, 2, 3, blob, 1.0f, {0.0f, 0.0f, 0.0f}, true);
+    tc::img::create_blob(image, 2, 2, 3, blob, 1.0f, {0.0f, 0.0f, 0.0f}, true);
 
     // With swapRB_channels = true, R and B channels should be swapped
     // So channel 0 in blob should have B values (200)
@@ -143,12 +143,12 @@ TEST_F(image_processing_test, create_blob_void_version_swap_rb)
     }
 }
 
-// Test create_blob return version with default parameters
+// Test tc::img::create_blob return version with default parameters
 TEST_F(image_processing_test, create_blob_return_version_defaults)
 {
-    auto image = createUniformImage(3, 3, 3, 127);
+    auto image = create_uniform_image(3, 3, 3, 127);
 
-    auto blob = create_blob(image, 3, 3, 3, 1.0f / 255.0f);
+    auto blob = tc::img::create_blob(image, 3, 3, 3, 1.0f / 255.0f);
 
     EXPECT_EQ(blob.size(), 3 * 3 * 3);
 
@@ -159,14 +159,14 @@ TEST_F(image_processing_test, create_blob_return_version_defaults)
     }
 }
 
-// Test create_blob return version with custom parameters
+// Test tc::img::create_blob return version with custom parameters
 TEST_F(image_processing_test, create_blob_return_version_custom)
 {
-    auto image = createUniformImage(2, 3, 3, 200);
+    auto image = create_uniform_image(2, 3, 3, 200);
     float scale = 0.02f;
     std::vector<float> mean = {0.5f, 1.0f, 1.5f};
 
-    auto blob = create_blob(image, 2, 3, 3, scale, mean, true);
+    auto blob = tc::img::create_blob(image, 2, 3, 3, scale, mean, true);
 
     EXPECT_EQ(blob.size(), 2 * 3 * 3);
 
@@ -185,10 +185,10 @@ TEST_F(image_processing_test, create_blob_return_version_custom)
 // Test single channel image
 TEST_F(image_processing_test, create_blob_single_channel)
 {
-    auto image = createUniformImage(4, 4, 1, 64);
+    auto image = create_uniform_image(4, 4, 1, 64);
     std::vector<float> blob(4 * 4 * 1);
 
-    create_blob(image, 4, 4, 1, blob);
+    tc::img::create_blob(image, 4, 4, 1, blob);
 
     float expected_value = 64.0f / 255.0f;
     for (auto value : blob)
@@ -200,10 +200,10 @@ TEST_F(image_processing_test, create_blob_single_channel)
 // Test four channel image (RGBA)
 TEST_F(image_processing_test, create_blob_four_channel)
 {
-    auto image = createUniformImage(2, 2, 4, 192);
+    auto image = create_uniform_image(2, 2, 4, 192);
     std::vector<float> blob(2 * 2 * 4);
 
-    create_blob(image, 2, 2, 4, blob);
+    tc::img::create_blob(image, 2, 2, 4, blob);
 
     float expected_value = 192.0f / 255.0f;
     for (auto value : blob)
@@ -218,7 +218,7 @@ TEST_F(image_processing_test, create_blob_complex_pattern)
     auto image = createTestImage(3, 2, 3); // 3x2 RGB image with pattern
     std::vector<float> blob(3 * 2 * 3);
 
-    create_blob(image, 3, 2, 3, blob, 1.0f, {0.0f, 0.0f, 0.0f}, false);
+    tc::img::create_blob(image, 3, 2, 3, blob, 1.0f, {0.0f, 0.0f, 0.0f}, false);
 
     EXPECT_EQ(blob.size(), 18);
 
@@ -249,7 +249,7 @@ TEST_F(image_processing_test, create_blob_layout)
         100, 110, 120};
 
     std::vector<float> blob(2 * 2 * 3);
-    create_blob(image, 2, 2, 3, blob, 1.0f, {0.0f, 0.0f, 0.0f}, false);
+    tc::img::create_blob(image, 2, 2, 3, blob, 1.0f, {0.0f, 0.0f, 0.0f}, false);
 
     // Expected blob layout: [R_channel_pixels, G_channel_pixels, B_channel_pixels]
     // R channel: [10, 40, 70, 100] (row-major order)
@@ -279,10 +279,10 @@ TEST_F(image_processing_test, create_blob_consistency)
 
     // Test void version
     std::vector<float> blob_void(4 * 3 * 3);
-    create_blob(image, 4, 3, 3, blob_void, 0.5f, {0.1f, 0.2f, 0.3f}, true);
+    tc::img::create_blob(image, 4, 3, 3, blob_void, 0.5f, {0.1f, 0.2f, 0.3f}, true);
 
     // Test return version
-    auto blob_return = create_blob(image, 4, 3, 3, 0.5f, {0.1f, 0.2f, 0.3f}, true);
+    auto blob_return = tc::img::create_blob(image, 4, 3, 3, 0.5f, {0.1f, 0.2f, 0.3f}, true);
 
     // Both should produce identical results
     ASSERT_EQ(blob_void.size(), blob_return.size());
@@ -295,10 +295,10 @@ TEST_F(image_processing_test, create_blob_consistency)
 // Test with different numeric types
 TEST_F(image_processing_test, create_blob_double_type)
 {
-    auto image = createUniformImage(2, 2, 3, 100);
+    auto image = create_uniform_image(2, 2, 3, 100);
     std::vector<double> blob(2 * 2 * 3);
 
-    create_blob(image, 2, 2, 3, blob, 1.0 / 255.0, {0.0, 0.0, 0.0}, false);
+    tc::img::create_blob(image, 2, 2, 3, blob, 1.0 / 255.0, {0.0, 0.0, 0.0}, false);
 
     double expected_value = 100.0 / 255.0;
     for (auto value : blob)
@@ -317,7 +317,7 @@ TEST_F(image_processing_test, create_blob_boundary_values)
     };
 
     std::vector<float> blob(2 * 1 * 3);
-    create_blob(image, 2, 1, 3, blob);
+    tc::img::create_blob(image, 2, 1, 3, blob);
 
     // First pixel should map to 0.0
     EXPECT_NEAR(blob[0], 0.0f, 1e-6f); // R channel, first pixel
@@ -333,7 +333,7 @@ TEST_F(image_processing_test, create_blob_boundary_values)
 // Test with different mean vector sizes (edge case)
 TEST_F(image_processing_test, create_blob_mean_vector_size_handling)
 {
-    auto image = createUniformImage(2, 2, 3, 128);
+    auto image = create_uniform_image(2, 2, 3, 128);
     std::vector<float> blob(2 * 2 * 3);
 
     // Test with smaller mean vector (should handle gracefully)
@@ -341,7 +341,7 @@ TEST_F(image_processing_test, create_blob_mean_vector_size_handling)
 
     // This should not crash, though behavior depends on implementation
     EXPECT_NO_THROW({
-        create_blob(image, 2, 2, 3, blob, 1.0f / 255.0f, small_mean, false);
+        tc::img::create_blob(image, 2, 2, 3, blob, 1.0f / 255.0f, small_mean, false);
     });
 }
 

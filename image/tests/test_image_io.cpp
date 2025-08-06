@@ -14,6 +14,7 @@
 
 #include <teiacare/image/image_io.hpp>
 
+#include "image_data_path.hpp"
 #include <cstdint>
 #include <cstdlib>
 #include <filesystem>
@@ -404,6 +405,337 @@ TEST_F(image_io_test, extension_case_sensitivity)
     // The implementation likely only supports lowercase extensions
     EXPECT_THROW(tc::img::image_save(png_file, image_data, width, height, channels), std::runtime_error);
     EXPECT_THROW(tc::img::image_save(jpg_file, image_data, width, height, channels), std::runtime_error);
+}
+
+// === Real Image Tests ===
+
+// Test loading landscape.jpg
+TEST_F(image_io_test, load_real_landscape_jpg)
+{
+    auto landscape_path = std::filesystem::path(tc::img::tests::image_data_path) / "landscape.jpg";
+
+    // Verify the test image exists
+    ASSERT_TRUE(std::filesystem::exists(landscape_path))
+        << "Test image not found: " << landscape_path;
+
+    // Load the image
+    auto [image_data, width, height, channels] = tc::img::image_load(landscape_path);
+
+    // Verify basic properties
+    EXPECT_GT(width, 0);
+    EXPECT_GT(height, 0);
+    EXPECT_GT(channels, 0);
+    EXPECT_EQ(image_data.size(), width * height * channels);
+
+    // For a JPEG, we typically expect 3 channels (RGB)
+    EXPECT_EQ(channels, 3);
+
+    // For a landscape, width should typically be greater than height
+    EXPECT_GT(width, height);
+}
+
+// Test loading portrait.jpg
+TEST_F(image_io_test, load_real_portrait_jpg)
+{
+    auto portrait_path = std::filesystem::path(tc::img::tests::image_data_path) / "portrait.jpg";
+
+    // Verify the test image exists
+    ASSERT_TRUE(std::filesystem::exists(portrait_path))
+        << "Test image not found: " << portrait_path;
+
+    // Load the image
+    auto [image_data, width, height, channels] = tc::img::image_load(portrait_path);
+
+    // Verify basic properties
+    EXPECT_GT(width, 0);
+    EXPECT_GT(height, 0);
+    EXPECT_GT(channels, 0);
+    EXPECT_EQ(image_data.size(), width * height * channels);
+
+    // For a JPEG, we typically expect 3 channels (RGB)
+    EXPECT_EQ(channels, 3);
+
+    // For a portrait, height should typically be greater than width
+    EXPECT_GT(height, width);
+}
+
+// Test loading square.png
+TEST_F(image_io_test, load_real_square_png)
+{
+    auto square_path = std::filesystem::path(tc::img::tests::image_data_path) / "square.png";
+
+    // Verify the test image exists
+    ASSERT_TRUE(std::filesystem::exists(square_path))
+        << "Test image not found: " << square_path;
+
+    // Load the image
+    auto [image_data, width, height, channels] = tc::img::image_load(square_path);
+
+    // Verify basic properties
+    EXPECT_GT(width, 0);
+    EXPECT_GT(height, 0);
+    EXPECT_GT(channels, 0);
+    EXPECT_EQ(image_data.size(), width * height * channels);
+
+    // For a square image, width should equal height
+    EXPECT_EQ(width, height);
+
+    // PNG can have 1, 2, 3, or 4 channels depending on the image
+    EXPECT_GE(channels, 1);
+    EXPECT_LE(channels, 4);
+    EXPECT_EQ(width, height);
+}
+
+// Test loading landscape.jpg as binary data
+TEST_F(image_io_test, load_real_landscape_as_binary)
+{
+    auto landscape_path = std::filesystem::path(tc::img::tests::image_data_path) / "landscape.jpg";
+
+    // Verify the test image exists
+    ASSERT_TRUE(std::filesystem::exists(landscape_path))
+        << "Test image not found: " << landscape_path;
+
+    // Load as binary data
+    auto binary_data = tc::img::image_load_as_binary(landscape_path);
+
+    // Verify we got data
+    EXPECT_GT(binary_data.size(), 0);
+
+    // JPEG files should start with the JPEG SOI marker (0xFF 0xD8)
+    ASSERT_GE(binary_data.size(), 2);
+    EXPECT_EQ(binary_data[0], 0xFF);
+    EXPECT_EQ(binary_data[1], 0xD8);
+}
+
+// Test loading square.png as binary data
+TEST_F(image_io_test, load_real_square_as_binary)
+{
+    auto square_path = std::filesystem::path(tc::img::tests::image_data_path) / "square.png";
+
+    // Verify the test image exists
+    ASSERT_TRUE(std::filesystem::exists(square_path))
+        << "Test image not found: " << square_path;
+
+    // Load as binary data
+    auto binary_data = tc::img::image_load_as_binary(square_path);
+
+    // Verify we got data
+    EXPECT_GT(binary_data.size(), 0);
+
+    // PNG files should start with the PNG signature
+    ASSERT_GE(binary_data.size(), 8);
+    std::vector<uint8_t> png_signature = {0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A};
+    for (size_t i = 0; i < png_signature.size(); ++i)
+    {
+        EXPECT_EQ(binary_data[i], png_signature[i]);
+    }
+}
+
+// Test loading from memory using landscape.jpg
+TEST_F(image_io_test, load_real_landscape_from_memory)
+{
+    auto landscape_path = std::filesystem::path(tc::img::tests::image_data_path) / "landscape.jpg";
+
+    // Verify the test image exists
+    ASSERT_TRUE(std::filesystem::exists(landscape_path))
+        << "Test image not found: " << landscape_path;
+
+    // First load as binary data
+    auto binary_data = tc::img::image_load_as_binary(landscape_path);
+    ASSERT_GT(binary_data.size(), 0);
+
+    // Now load from memory
+    auto [image_data, width, height, channels] = tc::img::image_load_from_memory(binary_data.data(), binary_data.size());
+
+    // Verify basic properties
+    EXPECT_GT(width, 0);
+    EXPECT_GT(height, 0);
+    EXPECT_GT(channels, 0);
+    EXPECT_EQ(image_data.size(), width * height * channels);
+    EXPECT_EQ(channels, 3); // JPEG typically has 3 channels
+}
+
+// Test format conversion: JPEG to PNG
+TEST_F(image_io_test, convert_real_jpeg_to_png)
+{
+    auto landscape_path = std::filesystem::path(tc::img::tests::image_data_path) / "landscape.jpg";
+    auto output_png = temp_dir_ / "landscape_converted.png";
+
+    // Verify the test image exists
+    ASSERT_TRUE(std::filesystem::exists(landscape_path))
+        << "Test image not found: " << landscape_path;
+
+    // Load the JPEG
+    auto [image_data, width, height, channels] = tc::img::image_load(landscape_path);
+
+    // Save as PNG
+    EXPECT_NO_THROW(tc::img::image_save(output_png, image_data, width, height, channels));
+    EXPECT_TRUE(std::filesystem::exists(output_png));
+    EXPECT_GT(std::filesystem::file_size(output_png), 0);
+
+    // Verify we can load the converted PNG
+    auto [converted_data, conv_width, conv_height, conv_channels] = tc::img::image_load(output_png);
+    EXPECT_EQ(conv_width, width);
+    EXPECT_EQ(conv_height, height);
+    EXPECT_EQ(conv_channels, channels);
+}
+
+// Test format conversion: PNG to JPEG
+TEST_F(image_io_test, convert_real_png_to_jpeg)
+{
+    auto square_path = std::filesystem::path(tc::img::tests::image_data_path) / "square.png";
+    auto output_jpg = temp_dir_ / "square_converted.jpg";
+
+    // Verify the test image exists
+    ASSERT_TRUE(std::filesystem::exists(square_path))
+        << "Test image not found: " << square_path;
+
+    // Load the PNG
+    auto [image_data, width, height, channels] = tc::img::image_load(square_path);
+
+    // Save as JPEG (note: if PNG has alpha channel, this might need special handling)
+    EXPECT_NO_THROW(tc::img::image_save(output_jpg, image_data, width, height, channels));
+    EXPECT_TRUE(std::filesystem::exists(output_jpg));
+    EXPECT_GT(std::filesystem::file_size(output_jpg), 0);
+}
+
+// Test format conversion: JPEG to BMP
+TEST_F(image_io_test, convert_real_jpeg_to_bmp)
+{
+    auto portrait_path = std::filesystem::path(tc::img::tests::image_data_path) / "portrait.jpg";
+    auto output_bmp = temp_dir_ / "portrait_converted.bmp";
+
+    // Verify the test image exists
+    ASSERT_TRUE(std::filesystem::exists(portrait_path))
+        << "Test image not found: " << portrait_path;
+
+    // Load the JPEG
+    auto [image_data, width, height, channels] = tc::img::image_load(portrait_path);
+
+    // Save as BMP
+    EXPECT_NO_THROW(tc::img::image_save(output_bmp, image_data, width, height, channels));
+    EXPECT_TRUE(std::filesystem::exists(output_bmp));
+    EXPECT_GT(std::filesystem::file_size(output_bmp), 0);
+}
+
+// Test format conversion: PNG to TGA
+TEST_F(image_io_test, convert_real_png_to_tga)
+{
+    auto square_path = std::filesystem::path(tc::img::tests::image_data_path) / "square.png";
+    auto output_tga = temp_dir_ / "square_converted.tga";
+
+    // Verify the test image exists
+    ASSERT_TRUE(std::filesystem::exists(square_path))
+        << "Test image not found: " << square_path;
+
+    // Load the PNG
+    auto [image_data, width, height, channels] = tc::img::image_load(square_path);
+
+    // Save as TGA
+    EXPECT_NO_THROW(tc::img::image_save(output_tga, image_data, width, height, channels));
+    EXPECT_TRUE(std::filesystem::exists(output_tga));
+    EXPECT_GT(std::filesystem::file_size(output_tga), 0);
+}
+
+// Test round-trip with real image: load, save, load again
+TEST_F(image_io_test, real_image_round_trip)
+{
+    auto landscape_path = std::filesystem::path(tc::img::tests::image_data_path) / "landscape.jpg";
+    auto intermediate_png = temp_dir_ / "landscape_intermediate.png";
+    auto final_jpg = temp_dir_ / "landscape_final.jpg";
+
+    // Verify the test image exists
+    ASSERT_TRUE(std::filesystem::exists(landscape_path))
+        << "Test image not found: " << landscape_path;
+
+    // Load original JPEG
+    auto [original_data, orig_width, orig_height, orig_channels] = tc::img::image_load(landscape_path);
+
+    // Save as PNG
+    EXPECT_NO_THROW(tc::img::image_save(intermediate_png, original_data, orig_width, orig_height, orig_channels));
+
+    // Load the PNG
+    auto [png_data, png_width, png_height, png_channels] = tc::img::image_load(intermediate_png);
+
+    // Save as JPEG again
+    EXPECT_NO_THROW(tc::img::image_save(final_jpg, png_data, png_width, png_height, png_channels));
+
+    // Load the final JPEG
+    auto [final_data, final_width, final_height, final_channels] = tc::img::image_load(final_jpg);
+
+    // Verify dimensions are preserved
+    EXPECT_EQ(final_width, orig_width);
+    EXPECT_EQ(final_height, orig_height);
+    EXPECT_EQ(final_channels, orig_channels);
+    EXPECT_EQ(final_data.size(), original_data.size());
+}
+
+// Test loading all real images and verify they have different properties
+TEST_F(image_io_test, load_all_real_images_comparison)
+{
+    auto landscape_path = std::filesystem::path(tc::img::tests::image_data_path) / "landscape.jpg";
+    auto portrait_path = std::filesystem::path(tc::img::tests::image_data_path) / "portrait.jpg";
+    auto square_path = std::filesystem::path(tc::img::tests::image_data_path) / "square.png";
+
+    // Verify all test images exist
+    ASSERT_TRUE(std::filesystem::exists(landscape_path))
+        << "Test image not found: " << landscape_path;
+    ASSERT_TRUE(std::filesystem::exists(portrait_path))
+        << "Test image not found: " << portrait_path;
+    ASSERT_TRUE(std::filesystem::exists(square_path))
+        << "Test image not found: " << square_path;
+
+    // Load all images
+    auto [landscape_data, land_w, land_h, land_c] = tc::img::image_load(landscape_path);
+    auto [portrait_data, port_w, port_h, port_c] = tc::img::image_load(portrait_path);
+    auto [square_data, sq_w, sq_h, sq_c] = tc::img::image_load(square_path);
+
+    // Verify all loaded successfully
+    EXPECT_GT(landscape_data.size(), 0);
+    EXPECT_GT(portrait_data.size(), 0);
+    EXPECT_GT(square_data.size(), 0);
+
+    // Verify landscape characteristics (width > height typically)
+    EXPECT_GT(land_w, land_h);
+
+    // Verify portrait characteristics (height > width typically)
+    EXPECT_GT(port_h, port_w);
+
+    // Verify square characteristics (width == height)
+    EXPECT_EQ(sq_w, sq_h);
+
+    // Verify all images have different dimensions
+    EXPECT_NE(land_w * land_h, port_w * port_h);
+    EXPECT_NE(land_w * land_h, sq_w * sq_h);
+    EXPECT_NE(port_w * port_h, sq_w * sq_h);
+}
+
+// Test saving real images in all supported formats
+TEST_F(image_io_test, save_real_image_all_formats)
+{
+    auto landscape_path = std::filesystem::path(tc::img::tests::image_data_path) / "landscape.jpg";
+
+    // Verify the test image exists
+    ASSERT_TRUE(std::filesystem::exists(landscape_path))
+        << "Test image not found: " << landscape_path;
+
+    // Load the image
+    auto [image_data, width, height, channels] = tc::img::image_load(landscape_path);
+
+    // Test all supported formats
+    std::vector<std::string> extensions = {".png", ".jpg", ".jpeg", ".bmp", ".tga"};
+
+    for (const auto& ext : extensions)
+    {
+        auto output_file = temp_dir_ / ("landscape_test" + ext);
+
+        EXPECT_NO_THROW(tc::img::image_save(output_file, image_data, width, height, channels))
+            << "Failed to save in format: " << ext;
+        EXPECT_TRUE(std::filesystem::exists(output_file))
+            << "Output file does not exist for format: " << ext;
+        EXPECT_GT(std::filesystem::file_size(output_file), 0)
+            << "Output file is empty for format: " << ext;
+    }
 }
 
 }

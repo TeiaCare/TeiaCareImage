@@ -52,6 +52,43 @@ protected:
     }
 };
 
+// Test tc::img::set_pixel_rgb bounds checking
+TEST_F(image_draw_test, set_pixel_out_of_bounds)
+{
+    auto img = create_blank_image(10, 10);
+    tc::img::color red_color = tc::img::color::red();
+
+    // Store original image for comparison
+    auto original_img = img;
+
+    // Test condition: x < 0
+    tc::img::set_pixel_rgb(img, 10, 10, -1, 5, red_color);
+    EXPECT_EQ(img, original_img); // Image should remain unchanged
+
+    // Test condition: x >= width
+    tc::img::set_pixel_rgb(img, 10, 10, 10, 5, red_color);
+    EXPECT_EQ(img, original_img); // Image should remain unchanged
+
+    // Test condition: y < 0
+    tc::img::set_pixel_rgb(img, 10, 10, 5, -1, red_color);
+    EXPECT_EQ(img, original_img); // Image should remain unchanged
+
+    // Test condition: y >= height
+    tc::img::set_pixel_rgb(img, 10, 10, 5, 10, red_color);
+    EXPECT_EQ(img, original_img); // Image should remain unchanged
+
+    // Test multiple conditions at once
+    tc::img::set_pixel_rgb(img, 10, 10, -1, -1, red_color); // x < 0 AND y < 0
+    tc::img::set_pixel_rgb(img, 10, 10, 10, 10, red_color); // x >= width AND y >= height
+    tc::img::set_pixel_rgb(img, 10, 10, -1, 10, red_color); // x < 0 AND y >= height
+    tc::img::set_pixel_rgb(img, 10, 10, 10, -1, red_color); // x >= width AND y < 0
+    EXPECT_EQ(img, original_img);                           // Image should remain unchanged
+
+    // Verify that valid coordinates still work
+    tc::img::set_pixel_rgb(img, 10, 10, 5, 5, red_color);
+    EXPECT_TRUE(is_pixel_color(img, 10, 5, 5, red_color));
+}
+
 // Test tc::img::set_pixel_rgb basic functionality
 TEST_F(image_draw_test, set_pixel_basic)
 {

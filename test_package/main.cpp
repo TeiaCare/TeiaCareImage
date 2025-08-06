@@ -1,4 +1,4 @@
-// Copyright 2025 TeiaCare
+// Copyright 20254 TeiaCare
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,8 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace tc::img::tests
-{
-const char* const image_data_path = "@IMAGE_DATA_ABS_PATH@";
+#include <teiacare/image/version.hpp>
 
+#include <iostream>
+
+int main()
+{
+    std::cout << tc::img::info::name << " v" << tc::img::info::version << std::endl;
+    return 0;
 }
