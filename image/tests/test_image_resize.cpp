@@ -283,8 +283,7 @@ TEST_F(image_resize_test, resize_real_landscape_void_version)
     std::vector<std::uint8_t> resized_image(target_width * target_height * orig_channels, 0);
 
     EXPECT_NO_THROW({
-        tc::img::image_resize_aspect_ratio(original_data, orig_width, orig_height, orig_channels,
-                                           target_width, target_height, resized_image);
+        tc::img::image_resize_aspect_ratio(original_data, orig_width, orig_height, orig_channels, target_width, target_height, resized_image);
     });
 
     // Verify the resized image has correct dimensions
@@ -316,8 +315,7 @@ TEST_F(image_resize_test, resize_real_landscape_return_version)
 
     std::vector<std::uint8_t> resized_image;
     EXPECT_NO_THROW({
-        resized_image = tc::img::image_resize_aspect_ratio(original_data, orig_width, orig_height, orig_channels,
-                                                           target_width, target_height);
+        resized_image = tc::img::image_resize_aspect_ratio(original_data, orig_width, orig_height, orig_channels, target_width, target_height);
     });
 
     // Verify the resized image has correct dimensions
@@ -346,8 +344,7 @@ TEST_F(image_resize_test, resize_real_portrait)
     int target_width = 200;
     int target_height = 200;
 
-    auto resized_image = tc::img::image_resize_aspect_ratio(original_data, orig_width, orig_height, orig_channels,
-                                                            target_width, target_height);
+    auto resized_image = tc::img::image_resize_aspect_ratio(original_data, orig_width, orig_height, orig_channels, target_width, target_height);
 
     // Verify the resized image has reasonable size
     EXPECT_GT(resized_image.size(), 0);
@@ -381,8 +378,7 @@ TEST_F(image_resize_test, resize_real_square_png)
 
     for (int target_size : target_sizes)
     {
-        auto resized_image = tc::img::image_resize_aspect_ratio(original_data, orig_width, orig_height, orig_channels,
-                                                                target_size, target_size);
+        auto resized_image = tc::img::image_resize_aspect_ratio(original_data, orig_width, orig_height, orig_channels, target_size, target_size);
 
         EXPECT_GT(resized_image.size(), 0) << "Failed for target size: " << target_size;
         EXPECT_EQ(resized_image.size() % orig_channels, 0) << "Invalid size for target: " << target_size;
@@ -413,8 +409,7 @@ TEST_F(image_resize_test, extreme_downscaling_real_images)
         std::vector<std::uint8_t> tiny_image(target_w * target_h * orig_channels, 0);
 
         EXPECT_NO_THROW({
-            tc::img::image_resize_aspect_ratio(original_data, orig_width, orig_height, orig_channels,
-                                               target_w, target_h, tiny_image);
+            tc::img::image_resize_aspect_ratio(original_data, orig_width, orig_height, orig_channels, target_w, target_h, tiny_image);
         }) << "Failed for size: "
            << target_w << "x" << target_h;
 
@@ -450,8 +445,7 @@ TEST_F(image_resize_test, extreme_upscaling_real_images)
         int target_width = orig_width * factor;
         int target_height = orig_height * factor;
 
-        auto enlarged_image = tc::img::image_resize_aspect_ratio(original_data, orig_width, orig_height, orig_channels,
-                                                                 target_width, target_height);
+        auto enlarged_image = tc::img::image_resize_aspect_ratio(original_data, orig_width, orig_height, orig_channels, target_width, target_height);
 
         EXPECT_GT(enlarged_image.size(), 0) << "Failed for scale factor: " << factor;
 
@@ -492,8 +486,7 @@ TEST_F(image_resize_test, different_aspect_ratios_real_images)
 
     for (const auto& target : targets)
     {
-        auto resized_image = tc::img::image_resize_aspect_ratio(original_data, orig_width, orig_height, orig_channels,
-                                                                target.width, target.height);
+        auto resized_image = tc::img::image_resize_aspect_ratio(original_data, orig_width, orig_height, orig_channels, target.width, target.height);
 
         EXPECT_GT(resized_image.size(), 0)
             << "Failed for " << target.description << " (" << target.width << "x" << target.height << ")";
@@ -525,12 +518,10 @@ TEST_F(image_resize_test, real_image_version_consistency)
 
     // Test void version
     std::vector<std::uint8_t> void_result(target_width * target_height * orig_channels, 0);
-    tc::img::image_resize_aspect_ratio(original_data, orig_width, orig_height, orig_channels,
-                                       target_width, target_height, void_result);
+    tc::img::image_resize_aspect_ratio(original_data, orig_width, orig_height, orig_channels, target_width, target_height, void_result);
 
     // Test return version
-    auto return_result = tc::img::image_resize_aspect_ratio(original_data, orig_width, orig_height, orig_channels,
-                                                            target_width, target_height);
+    auto return_result = tc::img::image_resize_aspect_ratio(original_data, orig_width, orig_height, orig_channels, target_width, target_height);
 
     // Results should be identical
     EXPECT_EQ(void_result.size(), return_result.size());
@@ -563,8 +554,7 @@ TEST_F(image_resize_test, resize_all_real_images_to_common_size)
         auto [original_data, orig_width, orig_height, orig_channels] = tc::img::image_load(image_path);
 
         // Resize to common dimensions
-        auto resized_image = tc::img::image_resize_aspect_ratio(original_data, orig_width, orig_height, orig_channels,
-                                                                common_width, common_height);
+        auto resized_image = tc::img::image_resize_aspect_ratio(original_data, orig_width, orig_height, orig_channels, common_width, common_height);
 
         EXPECT_GT(resized_image.size(), 0) << "Failed to resize " << description;
         EXPECT_EQ(resized_image.size() % orig_channels, 0) << "Invalid size for " << description;
@@ -575,11 +565,6 @@ TEST_F(image_resize_test, resize_all_real_images_to_common_size)
 
         // Should be at least a reasonable fraction of the target size
         EXPECT_GE(resized_image.size(), max_expected_size / 4) << "Size too small for " << description;
-
-        // Verify pixel values are valid
-        bool has_valid_pixels = std::all_of(resized_image.begin(), resized_image.end(),
-                                            [](uint8_t pixel) { return pixel <= 255; });
-        EXPECT_TRUE(has_valid_pixels) << "Invalid pixel values in resized " << description;
     }
 }
 
@@ -614,8 +599,7 @@ TEST_F(image_resize_test, resize_and_save_real_images)
     for (const auto& test : resize_tests)
     {
         // Resize the image
-        auto resized_image = tc::img::image_resize_aspect_ratio(original_data, orig_width, orig_height, orig_channels,
-                                                                test.width, test.height);
+        auto resized_image = tc::img::image_resize_aspect_ratio(original_data, orig_width, orig_height, orig_channels, test.width, test.height);
 
         EXPECT_GT(resized_image.size(), 0) << "Resize failed for " << test.suffix;
 
