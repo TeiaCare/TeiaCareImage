@@ -2,7 +2,13 @@
 
 Welcome to TeiaCareImage!
 
-TeiaCareImage is a collection of C++ image processing utilities.
+*TeiaCareImage* is a collection of C++ image processing utilities.
+
+[![Docs](https://img.shields.io/badge/Docs-TeiaCareImage-white.svg)](https://teiacare.github.io/TeiaCareImage/md_README.html)
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/cc286559eb114092ae9346726fa61a0a)](https://app.codacy.com/gh/TeiaCare/TeiaCareImage/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade)
+[![Codacy Badge](https://app.codacy.com/project/badge/Coverage/cc286559eb114092ae9346726fa61a0a)](https://app.codacy.com/gh/TeiaCare/TeiaCareImage/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_coverage)
+
+![teiacareimage](https://socialify.git.ci/teiacare/teiacareimage/image?description=1&font=Raleway&name=1&pattern=Solid&theme=Auto)
 
 ## Getting Started
 
@@ -72,4 +78,4 @@ This project is licensed under the [Apache License, Version 2.0](./LICENSE).
 
 [![License](https://img.shields.io/badge/License-Apache_v2-blue)](./LICENSE)
 
-Copyright © 2024 [TeiaCare](https://teiacare.com/)
+Copyright © 2025 [TeiaCare](https://teiacare.com/)
