@@ -13,4 +13,5 @@
 **/compile_commands.json
 **/CMakeUserPresets.json
 **/src/version.cpp
+**/image_data_path.hpp
 /docs

@@ -21,6 +21,7 @@
 #include <teiacare/image/image_processing.hpp>
 #include <teiacare/image/image_resize.hpp>
 
+#include "image_data_path.hpp"
 #include <cassert>
 #include <filesystem>
 #include <iostream>
@@ -29,7 +30,7 @@
 int main(int argc, char** argv)
 {
     // Load image from jpeg file
-    const std::filesystem::path input_image_path = "img.jpeg";
+    const auto input_image_path = std::filesystem::path(tc::img::examples::image_data_path) / "portrait.jpg";
     auto [img_data, width, height, channels] = tc::img::image_load(input_image_path);
 
     // Preprocess image with aspect ratio resizing and blob creation

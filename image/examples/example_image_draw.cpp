@@ -20,6 +20,7 @@
 #include <teiacare/image/image_draw.hpp>
 #include <teiacare/image/image_io.hpp>
 
+#include "image_data_path.hpp"
 #include <filesystem>
 #include <iostream>
 #include <vector>
@@ -27,7 +28,7 @@
 int main(int, char**)
 {
     // Load image from jpeg file
-    const std::filesystem::path input_image_path = "img.jpeg";
+    const auto input_image_path = std::filesystem::path(tc::img::examples::image_data_path) / "landscape.jpg";
     auto [img_data, width, height, channels] = tc::img::image_load(input_image_path);
 
     {
@@ -55,7 +56,8 @@ int main(int, char**)
     }
 
     // Save image to png file
-    const std::filesystem::path output_image_path = "img_draw.png";
+    std::filesystem::create_directory("img");
+    const auto output_image_path = std::filesystem::path("img/img_draw.png");
     tc::img::image_save(output_image_path, img_data, width, height, channels);
 
     return 0;

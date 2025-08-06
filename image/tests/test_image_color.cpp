@@ -16,7 +16,7 @@
 
 #include <gtest/gtest.h>
 
-namespace tc::img::test
+namespace tc::img::tests
 {
 class color_test : public ::testing::Test
 {

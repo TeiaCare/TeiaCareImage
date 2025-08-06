@@ -23,7 +23,7 @@
 #include <random>
 #include <vector>
 
-namespace tc::img::test
+namespace tc::img::tests
 {
 class image_io_test : public ::testing::Test
 {

@@ -19,30 +19,44 @@
 
 #include <teiacare/image/image_io.hpp>
 
+#include "image_data_path.hpp"
 #include <filesystem>
 
 int main(int, char**)
 {
+    // Create output directory for images
+    std::filesystem::create_directory("img");
+
     {
-        // Load image from jpeg file
-        const std::filesystem::path input_image_path = "img.jpeg";
+        // Load image from jpg file
+        const auto input_image_path = std::filesystem::path(tc::img::examples::image_data_path) / "landscape.jpg";
         auto [img_data, width, height, channels] = tc::img::image_load(input_image_path);
 
         // Save image to png file
-        const std::filesystem::path output_image_path = "img.png";
+        const auto output_image_path = std::filesystem::path("img/landscape.png");
+        tc::img::image_save(output_image_path, img_data, width, height, channels);
+    }
+
+    {
+        // Load image from png file
+        const auto input_image_path = std::filesystem::path(tc::img::examples::image_data_path) / "square.png";
+        auto [img_data, width, height, channels] = tc::img::image_load(input_image_path);
+
+        // Save image to jpg file
+        const auto output_image_path = std::filesystem::path("img/square.jpg");
         tc::img::image_save(output_image_path, img_data, width, height, channels);
     }
 
     {
         // Load image from binary data
-        const std::filesystem::path input_image_path = "img.jpeg";
+        const auto input_image_path = std::filesystem::path(tc::img::examples::image_data_path) / "portrait.jpg";
         auto bin_img = tc::img::image_load_as_binary(input_image_path);
 
         // Create image data from binary image data
         auto [img_data, width, height, channels] = tc::img::image_load_from_memory(bin_img.data(), bin_img.size());
 
         // Save image to png file
-        const std::filesystem::path output_image_path = "out.png";
+        const auto output_image_path = std::filesystem::path("img/portrait.png");
         tc::img::image_save(output_image_path, img_data, width, height, channels);
     }
 

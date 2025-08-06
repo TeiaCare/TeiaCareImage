@@ -84,19 +84,19 @@ void image_save(const std::filesystem::path& image_path, const std::vector<uint8
 
     if (image_ext == ".png")
     {
-        ok = stbi_write_png(image_path.c_str(), width, height, channels, image_data.data(), width * channels) != 0;
+        ok = stbi_write_png(image_path.string().c_str(), width, height, channels, image_data.data(), width * channels) != 0;
     }
     else if (image_ext == ".jpg" || image_ext == ".jpeg")
     {
-        ok = stbi_write_jpg(image_path.c_str(), width, height, channels, image_data.data(), /*quality*/ 100) != 0;
+        ok = stbi_write_jpg(image_path.string().c_str(), width, height, channels, image_data.data(), /*quality*/ 100) != 0;
     }
     else if (image_ext == ".bmp")
     {
-        ok = stbi_write_bmp(image_path.c_str(), width, height, channels, image_data.data()) != 0;
+        ok = stbi_write_bmp(image_path.string().c_str(), width, height, channels, image_data.data()) != 0;
     }
     else if (image_ext == ".tga")
     {
-        ok = stbi_write_tga(image_path.c_str(), width, height, channels, image_data.data()) != 0;
+        ok = stbi_write_tga(image_path.string().c_str(), width, height, channels, image_data.data()) != 0;
     }
     else
     {

@@ -20,14 +20,18 @@
 #include <teiacare/image/image_io.hpp>
 #include <teiacare/image/image_resize.hpp>
 
+#include "image_data_path.hpp"
 #include <filesystem>
 #include <iostream>
 #include <vector>
 
 int main(int argc, char** argv)
 {
+    // Create output directory for images
+    std::filesystem::create_directory("img");
+
     // Load image from jpeg file
-    const std::filesystem::path input_image_path = "img.jpeg";
+    const auto input_image_path = std::filesystem::path(tc::img::examples::image_data_path) / "landscape.jpg";
     auto [img_data, width, height, channels] = tc::img::image_load(input_image_path);
 
     // Resize image to 300x300 while preserving aspect ratio
@@ -36,7 +40,7 @@ int main(int argc, char** argv)
     auto resized_image = tc::img::image_resize_aspect_ratio(img_data, width, height, channels, target_width, target_height);
 
     // Save image to png file
-    const std::filesystem::path output_image_path = "img_resized.png";
+    const auto output_image_path = std::filesystem::path("img/landscape_resized.png");
     tc::img::image_save(output_image_path, resized_image, target_width, target_height, channels);
 
     return 0;

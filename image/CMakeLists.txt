@@ -61,10 +61,10 @@ if(TC_ENABLE_UNIT_TESTS)
     find_package(GTest REQUIRED)
     include(GoogleTest)
 
-    # set(DATA_ABS_PATH ${CMAKE_SOURCE_DIR}/data/)
-    # configure_file(
-    #     ${CMAKE_CURRENT_SOURCE_DIR}/tests/utils/data_path.hpp.in
-    #     ${CMAKE_CURRENT_SOURCE_DIR}/tests/utils/data_path.hpp)
+    set(IMAGE_DATA_ABS_PATH ${CMAKE_SOURCE_DIR}/data/)
+    configure_file(
+        ${CMAKE_CURRENT_SOURCE_DIR}/tests/image_data_path.hpp.in
+        ${CMAKE_CURRENT_SOURCE_DIR}/tests/image_data_path.hpp)
 
     set(UNIT_TESTS_SRC
         tests/main.cpp
@@ -102,6 +102,11 @@ endif()
 # Examples
 if(TC_ENABLE_EXAMPLES)
     include(examples)
+    set(IMAGE_DATA_ABS_PATH ${CMAKE_SOURCE_DIR}/data/)
+    configure_file(
+        ${CMAKE_CURRENT_SOURCE_DIR}/examples/image_data_path.hpp.in
+        ${CMAKE_CURRENT_SOURCE_DIR}/examples/image_data_path.hpp)
+
     add_example(example_image_io)
     add_example(example_image_draw)
     add_example(example_image_resize)

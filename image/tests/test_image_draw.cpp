@@ -19,7 +19,7 @@
 #include <gtest/gtest.h>
 #include <vector>
 
-namespace tc::img::test
+namespace tc::img::tests
 {
 class image_draw_test : public ::testing::Test
 {
