@@ -230,6 +230,18 @@ TEST_F(image_io_test, image_save_png)
     EXPECT_GT(std::filesystem::file_size(output_file), 0);
 }
 
+// Test tc::img::image_save with raw pointer version
+TEST_F(image_io_test, image_save_png_raw_pointer)
+{
+    int width = 4, height = 3, channels = 3;
+    auto image_data = createUniformImageData(width, height, channels, 128);
+    auto output_file = temp_dir_ / "test_ptr.png";
+
+    EXPECT_NO_THROW(tc::img::image_save(output_file, image_data.data(), width, height, channels));
+    EXPECT_TRUE(std::filesystem::exists(output_file));
+    EXPECT_GT(std::filesystem::file_size(output_file), 0);
+}
+
 // Test tc::img::image_save with JPEG format
 TEST_F(image_io_test, image_save_jpeg)
 {

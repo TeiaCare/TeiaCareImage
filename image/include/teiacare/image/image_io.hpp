@@ -63,6 +63,21 @@ auto image_load_from_memory(
 /*!
  * \brief Save image data to a file.
  * \param output_path Path where the image file should be saved
+ * \param image_data Pointer to the image pixel data buffer
+ * \param width Width of the image in pixels
+ * \param height Height of the image in pixels
+ * \param channels Number of color channels (e.g., 3 for RGB, 4 for RGBA)
+ */
+void image_save(
+    const std::filesystem::path& image_path,
+    const uint8_t* image_data_ptr,
+    int width,
+    int height,
+    int channels);
+
+/*!
+ * \brief Save image data to a file.
+ * \param output_path Path where the image file should be saved
  * \param image_data Vector containing the image pixel data
  * \param width Width of the image in pixels
  * \param height Height of the image in pixels

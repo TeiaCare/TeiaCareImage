@@ -77,26 +77,26 @@ auto image_load_from_memory(uint8_t* memory_data, std::size_t memory_data_size) 
     return create_image_data(image_data, width, height, channels);
 }
 
-void image_save(const std::filesystem::path& image_path, const std::vector<uint8_t>& image_data, int width, int height, int channels)
+void image_save(const std::filesystem::path& image_path, const uint8_t* image_data_ptr, int width, int height, int channels)
 {
     bool ok = false;
     const std::string image_ext = (image_path.has_extension() ? image_path.extension().string() : "png");
 
     if (image_ext == ".png")
     {
-        ok = stbi_write_png(image_path.string().c_str(), width, height, channels, image_data.data(), width * channels) != 0;
+        ok = stbi_write_png(image_path.string().c_str(), width, height, channels, image_data_ptr, width * channels) != 0;
     }
     else if (image_ext == ".jpg" || image_ext == ".jpeg")
     {
-        ok = stbi_write_jpg(image_path.string().c_str(), width, height, channels, image_data.data(), /*quality*/ 100) != 0;
+        ok = stbi_write_jpg(image_path.string().c_str(), width, height, channels, image_data_ptr, /*quality*/ 100) != 0;
     }
     else if (image_ext == ".bmp")
     {
-        ok = stbi_write_bmp(image_path.string().c_str(), width, height, channels, image_data.data()) != 0;
+        ok = stbi_write_bmp(image_path.string().c_str(), width, height, channels, image_data_ptr) != 0;
     }
     else if (image_ext == ".tga")
     {
-        ok = stbi_write_tga(image_path.string().c_str(), width, height, channels, image_data.data()) != 0;
+        ok = stbi_write_tga(image_path.string().c_str(), width, height, channels, image_data_ptr) != 0;
     }
     else
     {
@@ -106,6 +106,11 @@ void image_save(const std::filesystem::path& image_path, const std::vector<uint8
     {
         throw std::runtime_error("Failed to write image: " + image_path.string());
     }
+}
+
+void image_save(const std::filesystem::path& image_path, const std::vector<uint8_t>& image_data, int width, int height, int channels)
+{
+    return image_save(image_path, image_data.data(), width, height, channels);
 }
 
 }
