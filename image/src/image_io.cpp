@@ -69,7 +69,7 @@ auto image_load(const std::filesystem::path& image_path) -> std::tuple<std::vect
     return create_image_data(image_data, width, height, channels);
 }
 
-auto image_load_from_memory(uint8_t* memory_data, std::size_t memory_data_size) -> std::tuple<std::vector<uint8_t>, int, int, int>
+auto image_load_from_memory(const uint8_t* memory_data, std::size_t memory_data_size) -> std::tuple<std::vector<uint8_t>, int, int, int>
 {
     int width, height, channels;
     constexpr int channels_count = 3;

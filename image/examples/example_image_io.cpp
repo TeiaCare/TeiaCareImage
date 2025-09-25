@@ -50,7 +50,7 @@ int main(int, char**)
     {
         // Load image from binary data
         const auto input_image_path = std::filesystem::path(tc::img::examples::image_data_path) / "portrait.jpg";
-        auto bin_img = tc::img::image_load_as_binary(input_image_path);
+        const auto bin_img = tc::img::image_load_as_binary(input_image_path);
 
         // Create image data from binary image data
         auto [img_data, width, height, channels] = tc::img::image_load_from_memory(bin_img.data(), bin_img.size());

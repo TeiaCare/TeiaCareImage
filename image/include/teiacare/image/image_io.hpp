@@ -57,7 +57,7 @@ auto image_load(
  * \return Tuple containing the decoded image data and dimensions (data, width, height, channels)
  */
 auto image_load_from_memory(
-    uint8_t* memory_data,
+    const uint8_t* memory_data,
     std::size_t memory_data_size) -> std::tuple<std::vector<uint8_t>, int, int, int>;
 
 /*!
