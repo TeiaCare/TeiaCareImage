@@ -11,3 +11,5 @@ build_type=Release
 tools.cmake.cmaketoolchain:generator=Ninja
 tools.system.package_manager:mode=install
 tools.system.package_manager:sudo=True
+tools.files.download:retry=8
+tools.files.download:retry_wait=10
