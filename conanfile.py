@@ -13,8 +13,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from conans import ConanFile
-from conan.tools.cmake import CMake, CMakeToolchain
+from conan import ConanFile
+from conan.tools.cmake import CMake, CMakeToolchain, cmake_layout
+from conan.tools.files import copy
 import re
 
 def get_project_version():
@@ -50,6 +51,9 @@ class TeiaCareImage(ConanFile):
         if self.options.shared:
             del self.options.fPIC
 
+    def layout(self):
+        cmake_layout(self)
+
     def generate(self):
         tc = CMakeToolchain(self)
         tc.variables["BUILD_SHARED_LIBS"] = "ON" if self.options.shared else "OFF"
@@ -72,7 +76,7 @@ class TeiaCareImage(ConanFile):
         cmake.build()
 
     def package(self):
-        self.copy(pattern="VERSION")
+        copy(self, "VERSION", src=self.source_folder, dst=self.package_folder)
         cmake = CMake(self)
         cmake.install()
 
