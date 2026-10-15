@@ -1,5 +1,10 @@
 # TeiaCareImage Changelog
 
+## [0.2.4] - 2026-10-15
+### Fixed
+- Built against the Conan 2 stb recipe (stb/cci.20240531#ede183dc) instead of the Conan 1 revision 0
+- CD commands are cmd.exe-safe, so the Windows deploy jobs run on tags
+
 ## [0.2.3] - 2026-10-15
 ### Fixed
 - One Conan recipe revision per release: version.cpp is generated in the build directory instead of the source tree
