@@ -6,7 +6,7 @@ find_package(stb CONFIG REQUIRED)
 
 configure_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/src/version.cpp.in
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/version.cpp
+    ${CMAKE_CURRENT_BINARY_DIR}/version.cpp
 )
 
 set(TARGET_HEADERS
@@ -23,7 +23,7 @@ set(TARGET_SOURCES
     src/image_io.cpp
     src/image_draw.cpp
     src/image_resize.cpp
-    src/version.cpp
+    ${CMAKE_CURRENT_BINARY_DIR}/version.cpp
 )
 
 target_compile_features(${TARGET_NAME} PUBLIC cxx_std_20)
